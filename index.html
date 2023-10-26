@@ -7,7 +7,7 @@
 var visibleColumns = {
   subnet: true,
   netmask: false,
-  range: true,
+  range: false,
   useable: true,
   hosts: true,
   divide: true,
@@ -36,7 +36,7 @@ function updateNetwork()
     document.forms['calc'].elements['network'].value = inet_ntoa(tmpNetwork);
   }
 
-  if (newMask < 0 || newMask > 32) {
+  if (newMask < 0 || newMask > 29) {
     alert('The network mask you have entered is invalid');
     return;
   }
@@ -176,7 +176,7 @@ function createRow(calcbody, node, address, mask, labels, depth)
 
     var addressFirst = address;
     var addressLast = subnet_last_address(address, mask);
-    var useableFirst = address + 1;
+    var useableFirst = address + 4;
     var useableLast = addressLast - 1;
     var numHosts;
     var addressRange;
@@ -223,7 +223,7 @@ function createRow(calcbody, node, address, mask, labels, depth)
     /* Hosts */
     if (visibleColumns.hosts) {
       var newCell = document.createElement('TD');
-      newCell.appendChild(document.createTextNode(numHosts));
+      newCell.appendChild(document.createTextNode(numHosts + " + 5 Azure reserved"));
       newRow.appendChild(newCell);
     }
 
@@ -233,7 +233,7 @@ function createRow(calcbody, node, address, mask, labels, depth)
       var newCell = document.createElement('TD');
       newRow.appendChild(newCell);
 
-      if (mask == 32) {
+      if (mask == 29) {
 	var newLink = document.createElement('SPAN');
 	newLink.className = 'disabledAction';
 	newLink.appendChild(document.createTextNode('Divide'));
@@ -544,7 +544,7 @@ P		{
 <tr valign=top>
 <td>
 
-<h1>CIDR tool: a Visual Subnet calculator</h1>
+<h1>CIDR tool: (Azure) Visual Subnet calculator</h1>
 
 <p>Enter the network you wish to subnet:</p>
 
@@ -575,8 +575,11 @@ P		{
 </p>
 </form>
 
-<p>Click below to split and join subnets.<br>
-If you wish to save this subnetting for later, bookmark <a href="index.html" id="saveLink">this hyperlink</a>.</p>
+<p>
+  Click below to split and join subnets.<br>
+  <br/>
+  If you wish to save this subnetting for later, bookmark <a href="index.html" id="saveLink">this hyperlink</a>.
+</p>
 
 </td>
 </tr>
@@ -617,7 +620,7 @@ If you wish to save this subnetting for later, bookmark <a href="index.html" id=
 <br/>
 
 <p class="copyright">
-  forked by <a href="https://github.com/nicolgit">Nicola Delfino</a> from David Croft's <a href="http://www.davidc.net/sites/default/subnets/subnets.html">Visual Subnet Calculator</a>.<br/>
+  forked by <a href="https://github.com/nicolgit">NicolGit</a> from David Croft's <a href="http://www.davidc.net/sites/default/subnets/subnets.html">Visual Subnet Calculator</a>.<br/>
   source code <a href="https://github.com/nicolgit/cidr-tool">available on GitHub</a>
 </p>
 </body>
