@@ -18,6 +18,21 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: true
+      
+      - name: prepare build date in GITHUB_ENV
+        id: step_build_date_and_time
+        run: |
+          echo "build_timestamp=$(date)" >> $GITHUB_ENV
+         
+      - name: Use the build date from GITHUB_ENV
+        id: step_replace
+        # encode connection string with https://dwaves.de/tools/escape/ !!
+        run: |
+          echo "build date: ${{ env.build_timestamp }}"
+          echo "build number: ${{ github.run_number }}"
+          sed -i 's/__BUILDDATE__/${{ env.build_timestamp }}/g' index.html 
+          sed -i 's/__BUILDNUMBER__/${{ github.run_number }})/g' index.html 
+          
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
