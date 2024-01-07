@@ -29,11 +29,11 @@ jobs:
         # encode connection string with https://dwaves.de/tools/escape/ !!
         run: |
           echo "build date: $(date +'%Y-%m-%d')"
-          echo "build number: ${{ github.run_number }}"
-          echo "NOW=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
           echo "build numbe r: ${{ github.run_number }}"
-          sed -i 's/__BUILDDATE__/${{ env.build_timestamp }}/g' index.html 
-          sed -i 's/__BUILDNUMBER__/$NOW/g' index.html 
+          echo "NOW=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
+          sed -i 's/__BUILDDATE__/$(date +'%Y-%m-%d')/g' index.html 
+          sed -i 's/__BUILDNUMBER__/${{ github.run_number }}/g' index.html 
           
       - name: Build And Deploy
         id: builddeploy
