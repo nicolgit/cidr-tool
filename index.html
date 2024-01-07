@@ -5,7 +5,7 @@
   <link rel="icon" type="image/x-icon" href="/favicon.png">
 </head>
 
-<title>Visual Subnet Calculator</title>
+<title>Azure CIDR designer</title>
 <script language="javascript" type="text/javascript">
 <!--
 
@@ -274,10 +274,10 @@ function createRow(calcbody, node, address, mask, labels, depth)
 	  //	newCell.onmouseover = function() { window.status = joinnode[0]+'---'+joinnode[1]+'---'+joinnode[2]+'>>>>>'+node[2];}
 	}
 
-	var newImg = document.createElement('IMG');
-	newImg.src = 'img/'+mask+'.gif';
-	newCell.appendChild(newImg);
-	newRow.appendChild(newCell);
+  var maskText = document.createElement('P');
+  maskText.innerText = '/' + mask;
+  newCell.appendChild(maskText);
+  newRow.appendChild(newCell);
 
 	colspan = 1; // reset for subsequent cells
       }
@@ -496,9 +496,9 @@ H2		{
 
 H3		{
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif, Verdana, sans-serif;
-margin: 0px;  
+  margin: 0px;  
 }
-BODY		{
+BODY	{
   font-family: A'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif, Verdana, sans-serif;
   font-size: 24pt;
 }
@@ -541,13 +541,17 @@ P		{
 }
 
 .maskSpan {
-  background-color: #9fbafa;
-  text-align: right;
+  background-color: #dddddd;
+  text-align: center;
+
 }
 .maskSpanJoinable {
-  background-color: #ffb06f;
-  text-align: right;
- cursor: pointer;
+  background-color: #6dc0ff;
+  text-align: center;
+  cursor: pointer;
+  writing-mode: vertical-rl;
+  transform: rotate(0deg);
+  white-space: nowrap;
 }
 
 .maskSpanRotate {
@@ -564,7 +568,7 @@ P		{
 <td>
 
 <h1><img alt="Azure" class="imagealigned" height="48" width="48" src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/microsoftazure.svg"/>&nbsp;&nbsp;Azure CIDR designer</h1>
-<h3>unofficial visual subnet calculator for Azure virtual networks</h3>
+<h3>visual subnet calculator for Azure virtual networks</h3>
 <hr noshade color="grey" size="2">
 
 
@@ -634,8 +638,8 @@ P		{
 <br/>
 
 <p class="copyright">
-<a href="https://github.com/nicolgit">NicolGit</a> - V__BUILDNUMBER__ - source code <a href="https://github.com/nicolgit/cidr-tool"><img alt="source on GitHub" class="imagealigned" height="24" width="24" src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg"  /></a>
-<br/>built on __BUILDDATE__ 
+<a href="https://github.com/nicolgit">NicolGit</a> - V__BUILDNUMBER__ - <a href="https://github.com/nicolgit/cidr-tool">source code</a> <a href="https://github.com/nicolgit/cidr-tool"><img alt="source on GitHub" class="imagealigned" height="24" width="24" src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg"  /></a>
+<br/>last update __BUILDDATE__ 
 </p>
 </body>
 </html>
