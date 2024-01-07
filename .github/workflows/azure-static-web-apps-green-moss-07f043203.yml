@@ -32,7 +32,7 @@ jobs:
           echo "build numbe r: ${{ github.run_number }}"
           echo "NOW=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
 
-          sed -i 's/__BUILDDATE__/$(date +'%Y-%m-%d')/g' index.html 
+          sed -i 's/__BUILDDATE__/"$GITHUB_ENV"/g' index.html 
           sed -i 's/__BUILDNUMBER__/${{ github.run_number }}/g' index.html 
           
       - name: Build And Deploy
