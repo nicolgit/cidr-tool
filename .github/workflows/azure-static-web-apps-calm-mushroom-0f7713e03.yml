@@ -31,7 +31,7 @@ jobs:
         run: |
           build=$(date +%Y.%m.%d).github
           echo "build date: ${{ env.build_timestamp }} - $build"
-          echo "build number: ${{ github.run_number }}"
+          echo "build number: ${{ 24 + github.run_number }}"
           sed -i "s/__BUILDDATE__/$build/g" index.html 
           sed -i 's/__BUILDNUMBER__/${{ github.run_number }}/g' index.html 
       - name: Build And Deploy
