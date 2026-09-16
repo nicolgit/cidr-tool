@@ -1,4 +1,4 @@
-name: Azure Static Web Apps CI/CD
+name: deploy to cidr.duckiesfarm.com
 
 on:
   push:
