@@ -8,3 +8,15 @@ Azure holds 5 IP addresses for every subnet. The first and last IP in each subne
 This tool simplifies the job of segmenting an Azure virtual network into subnets by showing the addresses that can actually be used.
 
 Based on the [work of David C A Croft](http://www.davidc.net/sites/default/subnets/subnets.html).
+
+## Run locally using python
+
+The application is entirely static, all its source files are stored in the `src` directory, and no build step is required. To run it locally, open a terminal in the project directory, start a web server with `python -m http.server 8080 --directory src`, and visit [http://localhost:8080](http://localhost:8080).
+
+## Run locally in docker
+
+With Docker installed, run `docker compose up` from the project directory, then open [http://localhost:8080](http://localhost:8080). The configuration in `docker-compose.yml` serves the files from `src` using Nginx. Stop the container with `Ctrl+C` and remove it with `docker compose down`.
+
+## Deploy to Azure Static Web Apps
+
+Push the repository to GitHub, then create an **Azure Static Web App** from the Azure portal and select GitHub as the deployment source. Choose the repository and deployment branch, use **Custom** as the build preset, set the app location to `/src`, and leave the API and output locations empty because the application has no backend and requires no build step. Azure creates a GitHub Actions workflow automatically; verify that it uses `app_location: "/src"` and `skip_app_build: true`. Every push to the selected branch will then deploy the application automatically.
