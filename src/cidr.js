@@ -1,5 +1,6 @@
 var visibleColumns = {
     subnet: true,
+    name: false,
     netmask: false,
     range: false,
     useable: true,
@@ -87,11 +88,58 @@ var visibleColumns = {
     document.getElementById('joinHeader').colSpan = (rootSubnet[0] > 0 ? rootSubnet[0] : 1);
   //  document.getElementById('col_join').span = (rootSubnet[0] > 0 ? rootSubnet[0] : 1);
   
-    /* Create the bookmark hyperlink */
+    updateSaveLink();
+  }
+  
+  /* Create the bookmark hyperlink */
+  function updateSaveLink()
+  {
     var link = document.getElementById('saveLink');
-    if (link) {
-      link.href = 'index.html?network='+inet_ntoa(curNetwork)+'&mask='+curMask+'&division='+binToAscii(nodeToString(rootSubnet));
+    if (!link) {
+      return;
     }
+  
+    var href = 'index.html?network='+inet_ntoa(curNetwork)+'&mask='+curMask+'&division='+binToAscii(nodeToString(rootSubnet));
+  
+    var shown = [];
+    for (const col in visibleColumns) {
+      if (visibleColumns[col]) {
+        shown.push(col);
+      }
+    }
+    href += '&showcolumn='+shown.join(',');
+  
+    var names = collectNames(rootSubnet, []);
+    if (names.some(function (n) { return n !== ''; })) {
+      /* double encoding keeps separators safe through parseQueryString's unescape */
+      href += '&names='+names.map(function (n) { return encodeURIComponent(encodeURIComponent(n)); }).join(',');
+    }
+  
+    link.href = href;
+  }
+  
+  function collectNames(node, names)
+  {
+    if (node[2]) {
+      collectNames(node[2][0], names);
+      collectNames(node[2][1], names);
+    }
+    else {
+      names.push(node[3] ? node[3] : '');
+    }
+    return names;
+  }
+  
+  function applyNames(node, names, index)
+  {
+    if (node[2]) {
+      index = applyNames(node[2][0], names, index);
+      index = applyNames(node[2][1], names, index);
+      return index;
+    }
+  
+    node[3] = (index < names.length ? names[index] : '');
+    return index + 1;
   }
   
   function nodeToString(node)
@@ -165,6 +213,19 @@ var visibleColumns = {
       if (visibleColumns.subnet) {
         var newCell = document.createElement('TD');
         newCell.appendChild(document.createTextNode(inet_ntoa(address)+'/'+mask));
+        newRow.appendChild(newCell);
+      }
+  
+      /* subnet name */
+      if (visibleColumns.name) {
+        var newCell = document.createElement('TD');
+        var nameInput = document.createElement('INPUT');
+        nameInput.type = 'text';
+        nameInput.size = 10;
+        nameInput.maxLength = 10;
+        nameInput.value = node[3] ? node[3] : '';
+        nameInput.oninput = newNameHandler(node);
+        newCell.appendChild(nameInput);
         newRow.appendChild(newCell);
       }
   
@@ -279,6 +340,15 @@ var visibleColumns = {
   function newJoin(joinnode)
   {
     return function() { join(joinnode) };
+  }
+  
+  /* Same reason: keep a stable reference to the edited node */
+  function newNameHandler(namenode)
+  {
+    return function () {
+      namenode[3] = this.value;
+      updateSaveLink();
+    };
   }
   
   function divide(node)
@@ -398,6 +468,16 @@ var visibleColumns = {
   {
     preloadSubnetImages();
     args = parseQueryString();
+    if (args['showcolumn'] !== undefined) {
+      var shown = args['showcolumn'].split(',');
+      for (const col in visibleColumns) {
+        visibleColumns[col] = (shown.indexOf(col) >= 0);
+        var cb = document.getElementById('cb_'+col);
+        if (cb) {
+          cb.checked = visibleColumns[col];
+        }
+      }
+    }
     if (args['network'] && args['mask'] && args['division']) {
       document.forms['calc'].elements['network'].value = args['network'];
       document.forms['calc'].elements['netbits'].value = args['mask'];
@@ -406,6 +486,10 @@ var visibleColumns = {
       rootSubnet = [0, 0, null];
       if (division != '0') {
         loadNode(rootSubnet, division);
+      }
+      if (args['names']) {
+        var names = args['names'].split(',').map(function (n) { return decodeURIComponent(n); });
+        applyNames(rootSubnet, names, 0);
       }
       recreateTables();
     }

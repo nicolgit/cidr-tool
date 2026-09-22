@@ -38,6 +38,7 @@
 
 <p>Show columns: 
 <input type="checkbox" id="cb_subnet" checked onclick="toggleColumn(this)"><label for="cb_subnet">Subnet address</label>
+<input type="checkbox" id="cb_name" onclick="toggleColumn(this)"><label for="cb_name">Subnet name</label>
 <input type="checkbox" id="cb_netmask" onclick="toggleColumn(this)"><label for="cb_netmask">Netmask</label>
 <input type="checkbox" id="cb_range" checked onclick="toggleColumn(this)"><label for="cb_range">Range of addresses</label>
 <input type="checkbox" id="cb_useable" checked onclick="toggleColumn(this)"><label for="cb_useable">Useable IPs</label>
@@ -62,6 +63,7 @@
 <thead>
 <tr>
 <th id="subnetHeader">Subnet address</th>
+<th id="nameHeader">Subnet name</th>
 <th id="netmaskHeader">Netmask</th>
 <th id="rangeHeader">Range of addresses</th>
 <th id="useableHeader">Useable IPs</th>
