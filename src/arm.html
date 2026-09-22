@@ -7,9 +7,9 @@
   <script src="ipmath.js"></script>
   <script src="urlstate.js"></script>
   <script src="subnets.js"></script>
-  <script src="bicepgen.js"></script>
-  <script src="bicep.js"></script>
-  <title>Azure CIDR designer - bicep</title>
+  <script src="armgen.js"></script>
+  <script src="arm.js"></script>
+  <title>Azure CIDR designer - ARM template</title>
 </head>
 <body>
 
@@ -18,16 +18,16 @@
 <td>
 
 <h1><img alt="Azure" class="imagealigned" height="48" width="48" src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/microsoftazure.svg"/>&nbsp;&nbsp;Azure CIDR designer</h1>
-<h3>bicep template of your virtual network</h3>
+<h3>ARM template of your virtual network</h3>
 <hr noshade color="grey" size="2">
 
 <p>
-  <input type="button" value="Copy to clipboard" onclick="copyBicep()">
-  <input type="button" value="Download vnet.bicep" onclick="downloadBicep()">
+  <input type="button" value="Copy to clipboard" onclick="copyArm()">
+  <input type="button" value="Download vnet.json" onclick="downloadArm()">
   <a href="index.html" id="backLink">back to the designer</a>
 </p>
 
-<pre id="bicep" class="template">loading...</pre>
+<pre id="arm" class="template">loading...</pre>
 
 </td>
 </tr>

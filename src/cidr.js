@@ -107,6 +107,11 @@ var visibleColumns = {
     window.open('bicep.html?'+buildStateQuery(curNetwork, curMask, rootSubnet, visibleColumns), '_blank');
   }
   
+  function openArm()
+  {
+    window.open('arm.html?'+buildStateQuery(curNetwork, curMask, rootSubnet, visibleColumns), '_blank');
+  }
+  
   function createRow(calcbody, node, address, mask, labels, depth)
   {
     if (node[2]) {
