@@ -1,4 +1,4 @@
-<p align="center"><img src="favicon.png" width=64 height=64 /></p>
+<p align="center"><img src="src/favicon.png" width=64 height=64 /></p>
 <h1 align=center>Azure CIDR designer</h1>
 
 unofficial visual subnet calculator for Azure virtual networks, available at https://cidr.duckiesfarm.com

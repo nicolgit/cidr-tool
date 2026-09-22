@@ -19,4 +19,16 @@ function copyBicep()
   navigator.clipboard.writeText(document.getElementById('bicep').innerText);
 }
 
+function downloadBicep()
+{
+  var blobUrl = URL.createObjectURL(new Blob([document.getElementById('bicep').innerText], { type: 'text/plain' }));
+  var link = document.createElement('A');
+
+  link.href = blobUrl;
+  link.download = 'vnet.bicep';
+  link.click();
+
+  URL.revokeObjectURL(blobUrl);
+}
+
 window.onload = bicepOnLoad;

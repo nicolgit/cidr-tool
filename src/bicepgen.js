@@ -70,9 +70,10 @@ function generateBicep(state)
   lines.push('');
   lines.push('  How to deploy this template:');
   lines.push('');
-  lines.push('  1. preview the changes:');
+  lines.push('  1. save this content as vnet.bicep');
+  lines.push('  2. preview the changes:');
   lines.push('       az deployment group what-if --resource-group <resource-group> --template-file vnet.bicep');
-  lines.push('  2. deploy:');
+  lines.push('  3. deploy:');
   lines.push('       az deployment group create --resource-group <resource-group> --template-file vnet.bicep');
   lines.push('');
   lines.push('*/');
