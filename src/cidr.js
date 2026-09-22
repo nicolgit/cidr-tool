@@ -99,95 +99,12 @@ var visibleColumns = {
       return;
     }
   
-    var href = 'index.html?network='+inet_ntoa(curNetwork)+'&mask='+curMask+'&division='+binToAscii(nodeToString(rootSubnet));
-  
-    var shown = [];
-    for (const col in visibleColumns) {
-      if (visibleColumns[col]) {
-        shown.push(col);
-      }
-    }
-    href += '&showcolumn='+shown.join(',');
-  
-    var names = collectNames(rootSubnet, []);
-    if (names.some(function (n) { return n !== ''; })) {
-      /* double encoding keeps separators safe through parseQueryString's unescape */
-      href += '&names='+names.map(function (n) { return encodeURIComponent(encodeURIComponent(n)); }).join(',');
-    }
-  
-    link.href = href;
+    link.href = 'index.html?'+buildStateQuery(curNetwork, curMask, rootSubnet, visibleColumns);
   }
   
-  function collectNames(node, names)
+  function openBicep()
   {
-    if (node[2]) {
-      collectNames(node[2][0], names);
-      collectNames(node[2][1], names);
-    }
-    else {
-      names.push(node[3] ? node[3] : '');
-    }
-    return names;
-  }
-  
-  function applyNames(node, names, index)
-  {
-    if (node[2]) {
-      index = applyNames(node[2][0], names, index);
-      index = applyNames(node[2][1], names, index);
-      return index;
-    }
-  
-    node[3] = (index < names.length ? names[index] : '');
-    return index + 1;
-  }
-  
-  function nodeToString(node)
-  {
-    if (node[2]) {
-      return '1'+nodeToString(node[2][0])+nodeToString(node[2][1]);
-    }
-    else {
-      return '0';
-    }
-  }
-  
-  function binToAscii(str)
-  {
-    var curOut = '';
-    var curBit = 0;
-    var curChar = 0;
-  
-    for (var i=0; i<str.length; i++) {
-      if (str.charAt(i) == '1') {
-        curChar |= 1<<curBit;
-      }
-      curBit++;
-      if (curBit > 3) {
-        curOut += curChar.toString(16);
-        curChar = 0;
-        curBit = 0;
-      }
-    }
-    if (curBit > 0) {
-      curOut += curChar.toString(16);
-    }
-    return str.length+'.'+curOut;
-  }
-  
-  function asciiToBin(str)
-  {
-    var re = /([0-9]+)\.([0-9a-f]+)/;
-    var res = re.exec(str);
-    var len = res[1];
-    var encoded = res[2];
-    var out = '';
-    for (var i=0; i< res[1]; i++) {
-      var ch = parseInt(res[2].charAt(Math.floor(i/4)), 16);
-      var pos = i % 4;
-      out += (ch & (1<<pos) ? '1' : '0');
-    }
-    return out;
+    window.open('bicep.html?'+buildStateQuery(curNetwork, curMask, rootSubnet, visibleColumns), '_blank');
   }
   
   function createRow(calcbody, node, address, mask, labels, depth)
@@ -394,58 +311,7 @@ var visibleColumns = {
   var rootSubnet;
   
   // each node is Array:
-  // [0] => depth of children, total number of visible children, children
-  
-  
-  function inet_ntoa(addrint)
-  {
-    return ((addrint >> 24) & 0xff)+'.'+
-      ((addrint >> 16) & 0xff)+'.'+
-      ((addrint >> 8) & 0xff)+'.'+
-      (addrint & 0xff);
-  }
-  
-  function inet_aton(addrstr)
-  {
-    var re = /^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$/;
-    var res = re.exec(addrstr);
-  
-    if (res === null) {
-      return null;
-    }
-  
-    for (var i=1; i<=4; i++) {
-      if (res[i] < 0 || res[i] > 255) {
-        return null;
-      }
-    }
-  
-    return (res[1] << 24) | (res[2] << 16) | (res[3] << 8) | res[4];
-  }
-  
-  function network_address(ip, mask)
-  {
-    var maskbits = 0;
-    for (var i=31-mask; i>=0; i--) {
-      ip &= ~ 1<<i;
-    }
-    return ip;
-  }
-  
-  function subnet_addresses(mask)
-  {
-    return 2**(32-mask);
-  }
-  
-  function subnet_last_address(subnet, mask)
-  {
-    return subnet + subnet_addresses(mask) - 1;
-  }
-  
-  function subnet_netmask(mask)
-  {
-    return network_address(0xffffffff, mask);
-  }
+  // [0] => depth of children, total number of visible children, children, subnet name
   
   
   function preloadSubnetImages()
@@ -467,68 +333,30 @@ var visibleColumns = {
   function calcOnLoad()
   {
     preloadSubnetImages();
-    args = parseQueryString();
-    if (args['showcolumn'] !== undefined) {
-      var shown = args['showcolumn'].split(',');
+  
+    var state = parseState();
+  
+    if (state === null) {
+      updateNetwork();
+      return;
+    }
+  
+    if (state.columns) {
       for (const col in visibleColumns) {
-        visibleColumns[col] = (shown.indexOf(col) >= 0);
+        visibleColumns[col] = (state.columns.indexOf(col) >= 0);
         var cb = document.getElementById('cb_'+col);
         if (cb) {
           cb.checked = visibleColumns[col];
         }
       }
     }
-    if (args['network'] && args['mask'] && args['division']) {
-      document.forms['calc'].elements['network'].value = args['network'];
-      document.forms['calc'].elements['netbits'].value = args['mask'];
-      updateNetwork();
-      var division = asciiToBin(args['division']);
-      rootSubnet = [0, 0, null];
-      if (division != '0') {
-        loadNode(rootSubnet, division);
-      }
-      if (args['names']) {
-        var names = args['names'].split(',').map(function (n) { return decodeURIComponent(n); });
-        applyNames(rootSubnet, names, 0);
-      }
-      recreateTables();
-    }
-    else {
-      updateNetwork();
-    }
-  }
   
-  function loadNode(curNode, division)
-  {
-    if (division.charAt(0) == '0') {
-      return division.substr(1);
-    }
-    else {
-      curNode[2] = new Array();
-      curNode[2][0] = [0, 0, null];
-      curNode[2][1] = [0, 0, null];
+    document.forms['calc'].elements['network'].value = inet_ntoa(state.network);
+    document.forms['calc'].elements['netbits'].value = state.mask;
+    updateNetwork();
   
-      division = loadNode(curNode[2][0], division.substr(1));
-      division = loadNode(curNode[2][1], division);
-      return division;
-    }
-  }
-  
-  
-  function parseQueryString (str)
-  {
-    str = str ? str : location.search;
-    var query = str.charAt(0) == '?' ? str.substring(1) : str;
-    var args = new Object();
-    if (query) {
-      var fields = query.split('&');
-      for (var f = 0; f < fields.length; f++) {
-        var field = fields[f].split('=');
-        args[unescape(field[0].replace(/\+/g, ' '))] = 
-      unescape(field[1].replace(/\+/g, ' '));
-      }
-    }
-    return args;
+    rootSubnet = state.root;
+    recreateTables();
   }
   
   window.onload = calcOnLoad;
