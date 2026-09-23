@@ -29,6 +29,19 @@ function generateBicep(state)
   lines.push('');
   lines.push("param vnetName string = '"+vnetName+"'");
   lines.push('');
+  lines.push('var subnetConfigurations = [');
+
+  subnets.forEach(function (subnet) {
+    lines.push('  {');
+    lines.push("    name: '"+subnet.resolvedName+"'");
+    lines.push('    properties: {');
+    lines.push("      addressPrefix: '"+subnet.prefix+"'");
+    lines.push('    }');
+    lines.push('  }');
+  });
+
+  lines.push(']');
+  lines.push('');
   lines.push("resource vnet 'Microsoft.Network/virtualNetworks@"+BICEP_API_VERSION+"' = {");
   lines.push('  name: vnetName');
   lines.push('  location: location');
@@ -38,23 +51,12 @@ function generateBicep(state)
   lines.push("        '"+vnetPrefix+"'");
   lines.push('      ]');
   lines.push('    }');
-  lines.push('    subnets: [');
-
-  subnets.forEach(function (subnet) {
-    lines.push('      {');
-    lines.push("        name: '"+subnet.resolvedName+"'");
-    lines.push('        properties: {');
-    lines.push("          addressPrefix: '"+subnet.prefix+"'");
-    lines.push('        }');
-    lines.push('      }');
-  });
-
-  lines.push('    ]');
+  lines.push('    subnets: subnetConfigurations');
   lines.push('  }');
   lines.push('}');
   lines.push('');
   lines.push('output vnetId string = vnet.id');
-  lines.push('output subnetIds array = [for subnet in vnet.properties.subnets: subnet.id]');
+  lines.push("output subnetIds array = [for subnet in subnetConfigurations: resourceId('Microsoft.Network/virtualNetworks/subnets', vnet.name, subnet.name)]");
   lines.push('');
 
   return lines.join('\n');
