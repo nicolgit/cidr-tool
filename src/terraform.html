@@ -1,0 +1,42 @@
+<html lang="en">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+  <meta charset="utf-8">
+  <script src="analytics.js"></script>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="cidr.css">
+  <script src="ipmath.js"></script>
+  <script src="urlstate.js"></script>
+  <script src="subnets.js"></script>
+  <script src="terraformgen.js"></script>
+  <script src="terraform.js"></script>
+  <title>Azure CIDR designer - Terraform</title>
+</head>
+<body>
+
+<table width="100%">
+<tr valign=top>
+<td>
+
+<h1><img alt="Azure" class="imagealigned" height="48" width="48" src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/microsoftazure.svg"/>&nbsp;&nbsp;Azure CIDR designer</h1>
+<h3>Terraform template of your virtual network</h3>
+<hr noshade color="grey" size="2">
+
+<p>
+  <input type="button" value="Copy to clipboard" onclick="copyTerraform()">
+  <input type="button" value="Download vnet.tf" onclick="downloadTerraform()">
+  <a href="index.html" id="backLink">back to the designer</a>
+</p>
+
+<pre id="terraform" class="template">loading...</pre>
+
+</td>
+</tr>
+</table>
+
+<p class="copyright">
+<a href="https://github.com/nicolgit">NicolGit</a> - build __BUILDNUMBER__ - <a href="https://github.com/nicolgit/cidr-tool">source code</a> <a href="https://github.com/nicolgit/cidr-tool"><img alt="source on GitHub" class="imagealigned" height="24" width="24" src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg"  /></a>
+<br/>last update __BUILDDATE__ 
+</p>
+</body>
+</html>

@@ -112,6 +112,11 @@ var visibleColumns = {
     window.location.href = 'arm.html?'+buildStateQuery(curNetwork, curMask, rootSubnet, visibleColumns);
   }
   
+  function openTerraform()
+  {
+    window.location.href = 'terraform.html?'+buildStateQuery(curNetwork, curMask, rootSubnet, visibleColumns);
+  }
+  
   function createRow(calcbody, node, address, mask, labels, depth)
   {
     if (node[2]) {
