@@ -41,9 +41,9 @@
 
 <p>Show columns: 
 <input type="checkbox" id="cb_subnet" checked onclick="toggleColumn(this)"><label for="cb_subnet">Subnet address</label>
-<input type="checkbox" id="cb_name" onclick="toggleColumn(this)"><label for="cb_name">Subnet name</label>
+<input type="checkbox" id="cb_name" checked onclick="toggleColumn(this)"><label for="cb_name">Subnet name</label>
 <input type="checkbox" id="cb_netmask" onclick="toggleColumn(this)"><label for="cb_netmask">Netmask</label>
-<input type="checkbox" id="cb_range" checked onclick="toggleColumn(this)"><label for="cb_range">Range of addresses</label>
+<input type="checkbox" id="cb_range" onclick="toggleColumn(this)"><label for="cb_range">Range of addresses</label>
 <input type="checkbox" id="cb_useable" checked onclick="toggleColumn(this)"><label for="cb_useable">Useable IPs</label>
 <input type="checkbox" id="cb_hosts" checked onclick="toggleColumn(this)"><label for="cb_hosts">Hosts</label>
 <input type="checkbox" id="cb_divide" checked onclick="toggleColumn(this)"><label for="cb_divide">Divide</label>
@@ -59,6 +59,16 @@
 </td>
 </tr>
 </table>
+
+<!-- Azure subnet names reserved for specific services, with their minimum subnet size.
+     Source: Microsoft Learn documentation for VPN Gateway, Azure Firewall, Azure Bastion and Azure Route Server. -->
+<datalist id="reservedSubnetNames">
+<option value="GatewaySubnet" label="min. /27">
+<option value="AzureFirewallSubnet" label="min. /26">
+<option value="AzureFirewallManagementSubnet" label="exactly /26">
+<option value="AzureBastionSubnet" label="min. /26">
+<option value="RouteServerSubnet" label="min. /26">
+</datalist>
 
 <hr noshade color="grey" size="2">
 

@@ -1,6 +1,6 @@
 var visibleColumns = {
     subnet: true,
-    name: false,
+    name: true,
     netmask: false,
     range: false,
     useable: true,
@@ -148,8 +148,9 @@ var visibleColumns = {
         var newCell = document.createElement('TD');
         var nameInput = document.createElement('INPUT');
         nameInput.type = 'text';
-        nameInput.size = 10;
-        nameInput.maxLength = 10;
+        nameInput.size = 30;
+        nameInput.maxLength = 80;
+        nameInput.setAttribute('list', 'reservedSubnetNames');
         nameInput.value = node[3] ? node[3] : '';
         nameInput.oninput = newNameHandler(node);
         newCell.appendChild(nameInput);
