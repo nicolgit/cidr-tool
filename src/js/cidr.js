@@ -111,10 +111,110 @@ var visibleColumns = {
   {
     window.location.href = 'arm.html?'+buildStateQuery(curNetwork, curMask, rootSubnet, visibleColumns);
   }
-  
+
   function openTerraform()
   {
     window.location.href = 'terraform.html?'+buildStateQuery(curNetwork, curMask, rootSubnet, visibleColumns);
+  }
+
+  function getExportTable()
+  {
+    var columnDefinitions = [
+      { key: 'subnet', header: 'Subnet address' },
+      { key: 'name', header: 'Subnet name' },
+      { key: 'netmask', header: 'Netmask' },
+      { key: 'range', header: 'Range of addresses' },
+      { key: 'useable', header: 'Useable IPs' },
+      { key: 'hosts', header: 'Hosts' }
+    ];
+    var columns = columnDefinitions.filter(function (column) {
+      return visibleColumns[column.key];
+    });
+    var subnets = collectSubnets(rootSubnet, curNetwork, curMask, []);
+    var rows = subnets.map(function (subnet) {
+      var prefixParts = subnet.prefix.split('/');
+      var address = inet_aton(prefixParts[0]);
+      var mask = parseInt(prefixParts[1]);
+      var lastAddress = subnet_last_address(address, mask);
+      var values = {
+        subnet: subnet.prefix,
+        name: subnet.name,
+        netmask: inet_ntoa(subnet_netmask(mask)),
+        range: inet_ntoa(address)+' - '+inet_ntoa(lastAddress),
+        useable: inet_ntoa(address+4)+' - '+inet_ntoa(lastAddress-1),
+        hosts: (subnet_addresses(mask)-5)+' + 5 Azure reserved'
+      };
+
+      return columns.map(function (column) {
+        return values[column.key];
+      });
+    });
+
+    return {
+      headers: columns.map(function (column) { return column.header; }),
+      rows: rows
+    };
+  }
+
+  function downloadGeneratedFile(content, type, fileName)
+  {
+    var blobUrl = URL.createObjectURL(new Blob([content], { type: type }));
+    var link = document.createElement('A');
+
+    link.href = blobUrl;
+    link.download = fileName;
+    link.click();
+
+    URL.revokeObjectURL(blobUrl);
+  }
+
+  function escapeCsvValue(value)
+  {
+    var text = String(value);
+    return /[",\r\n]/.test(text) ? '"'+text.replace(/"/g, '""')+'"' : text;
+  }
+
+  function generateCsv()
+  {
+    var table = getExportTable();
+    if (table.headers.length === 0) {
+      alert('Select at least one data column before generating a CSV file.');
+      return;
+    }
+
+    var lines = [table.headers].concat(table.rows).map(function (row) {
+      return row.map(escapeCsvValue).join(',');
+    });
+
+    downloadGeneratedFile('\ufeff'+lines.join('\r\n'), 'text/csv;charset=utf-8', 'subnets.csv');
+  }
+
+  function escapeMarkdownValue(value)
+  {
+    return String(value)
+      .replace(/\\/g, '\\\\')
+      .replace(/\|/g, '\\|')
+      .replace(/\r?\n/g, '<br>');
+  }
+
+  function generateMarkdownTable()
+  {
+    var table = getExportTable();
+    if (table.headers.length === 0) {
+      alert('Select at least one data column before generating a Markdown table.');
+      return;
+    }
+
+    var lines = [
+      '| '+table.headers.map(escapeMarkdownValue).join(' | ')+' |',
+      '| '+table.headers.map(function () { return '---'; }).join(' | ')+' |'
+    ];
+
+    table.rows.forEach(function (row) {
+      lines.push('| '+row.map(escapeMarkdownValue).join(' | ')+' |');
+    });
+
+    downloadGeneratedFile(lines.join('\n')+'\n', 'text/markdown;charset=utf-8', 'subnets.md');
   }
   
   function createRow(calcbody, node, address, mask, labels, depth)
