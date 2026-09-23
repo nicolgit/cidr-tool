@@ -104,12 +104,12 @@ var visibleColumns = {
   
   function openBicep()
   {
-    window.open('bicep.html?'+buildStateQuery(curNetwork, curMask, rootSubnet, visibleColumns), '_blank');
+    window.location.href = 'bicep.html?'+buildStateQuery(curNetwork, curMask, rootSubnet, visibleColumns);
   }
   
   function openArm()
   {
-    window.open('arm.html?'+buildStateQuery(curNetwork, curMask, rootSubnet, visibleColumns), '_blank');
+    window.location.href = 'arm.html?'+buildStateQuery(curNetwork, curMask, rootSubnet, visibleColumns);
   }
   
   function createRow(calcbody, node, address, mask, labels, depth)
