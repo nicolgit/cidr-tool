@@ -425,26 +425,8 @@ var visibleColumns = {
   // [0] => depth of children, total number of visible children, children, subnet name
   
   
-  function preloadSubnetImages()
-  {
-    if (document.images) {
-      if (!document.preloadedImages) {
-        document.preloadedImages = new Array();
-      }
-  
-      for (var i=0; i<=32; i++) {
-        var img = new Image();
-        img.src = 'img/'+i+'.gif';
-        document.preloadedImages.push(img);
-      }
-    }
-  }
-  
-  
   function calcOnLoad()
   {
-    preloadSubnetImages();
-  
     var state = parseState();
   
     if (state === null) {
