@@ -3,21 +3,64 @@
 
 source code of the CIDR desaigner, a visual subnet calculator for Azure virtual networks, available at https://cidr.duckiesfarm.com
 
-![cidrtool](./img/cidr.gif)
+I came across [David C A Croft](http://www.davidc.net/sites/default/subnets/subnets.html)'s subnets a while ago and really liked the approach. It's a visual subnet calculator, but the interesting part for me was how simple it is to edit a network. It allows to start with a CIDR, split it, move things around, and generate a deep link to share the resulting layout with someone else.
 
-Azure holds 5 IP addresses for every subnet. The first and last IP in each subnet is reserved for the network identification and for broadcast, respectively. Azure also holds 3 additional addresses for internal use starting from the first address in the subnet. In Azure subnets are created using classless internet domain routing (**CIDR**) blocks of the address space that was designed for the Virtual Network. As an example, the smallest range you can specify for a subnet is /29, which provides eight IP addresses.
+I ended up using the idea as a base for something more specific to Azure: Azure CIDR designer.
 
-This tool simplifies the job of segmenting an Azure virtual network into subnets by showing the addresses that can actually be used.
+https://cidr.duckiesfarm.com/
 
-Based on the [work of David C A Croft](http://www.davidc.net/sites/default/subnets/subnets.html).
+![CIDR tool in action](/img/cidr.gif)
 
-## Run locally using python
+The main differences are all Azure-related:
+
+- you can name subnets
+- usable IP ranges take Azure's reserved addresses into account
+- you can generate Bicep, ARM and Terraform
+- you can export the result as CSV or Markdown table
+- you can still generate a deep link to share the design
+
+For example, you can start with:
+```
+
+10.0.0.0/16
+
+```
+
+and split it into something like:
+
+
+```
+frontend      10.0.0.0/24
+backend       10.0.1.0/24
+data          10.0.2.0/26
+management    10.0.2.64/27
+
+```
+
+Then send the link to a colleague, paste the Markdown table into a README or ticket, export the CSV, or generate the Terraform/Bicep/ARM for the network.
+
+It's a small tool, I mostly wanted something that makes the let's figure out the vnet address space part of an Azure project a little less annoying.
+
+
+## Want run locally using python
 
 The application is entirely static, all its source files are stored in the `src` directory, and no build step is required. To run it locally, open a terminal in the project directory, start a web server with `python -m http.server 8080 --directory src`, and visit [http://localhost:8080](http://localhost:8080).
 
-## Run locally in docker
+```
+git clone https://github.com/nicolgit/cidr-tool
+cd cidr-tool
+python -m http.server 8080 --directory src
+```
+
+## Want run locally in docker
 
 With Docker installed, run `docker compose up` from the project directory, then open [http://localhost:8080](http://localhost:8080). The configuration in `docker-compose.yml` serves the files from `src` using Nginx. Stop the container with `Ctrl+C` and remove it with `docker compose down`.
+
+```
+git clone https://github.com/nicolgit/cidr-tool
+cd cidr-tool
+docker compose up
+```
 
 ## Deploy to Azure Static Web Apps
 
